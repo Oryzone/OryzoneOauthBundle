@@ -10,11 +10,15 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+use Oryzone\Bundle\OauthBundle\Controller\Exception\AuthorizationException;
+
 class AuthorizationController extends Controller
 {
     /**
-     * @param string    $provider
-     * @param Request   $request
+     * @param  string                                                        $provider
+     * @param  Request                                                       $request
+     * @throws Exception\AuthorizationException                              if the user does not authorize the access
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException if an unexistent provider has been given
      * @return array|RedirectResponse
      */
     public function authorizeAction($provider, Request $request)
@@ -22,8 +26,8 @@ class AuthorizationController extends Controller
         $router = $this->get('router');
         $providerManager = $this->get('oryzone_oauth.provider_manager');
 
-        if(!$providerManager->has($provider)) {
-            // TODO handle invalid provider
+        if (!$providerManager->has($provider)) {
+            throw $this->createNotFoundException(sprintf('Invalid oauth provider "%s"', $provider));
         }
 
         /**
@@ -52,11 +56,15 @@ class AuthorizationController extends Controller
 
         // TODO act according OAuth version than can be read with $service::OAUTH_VERSION;
 
-        if($request->query->has('code'))
-        {
+        if ($request->query->has('error')) {
+            $error = $request->query->get('error');
+            $errorReason = $request->query->get('error_reason');
+            $message = $request->query->get('error_description');
+            $errorCode = $request->query->get('error_code', 500);
+            throw new AuthorizationException($error, $errorReason, $provider, $redirectUrl, $message, $errorCode);
+        } elseif ($request->query->has('code')) {
             $service->requestAccessToken($request->query->get('code'));
             // TODO handle invalid code
-
             return new RedirectResponse($redirectUrl);
         }
 

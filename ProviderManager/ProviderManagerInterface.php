@@ -2,9 +2,8 @@
 
 namespace Oryzone\Bundle\OauthBundle\ProviderManager;
 
-
-interface ProviderManagerInterface {
-
+interface ProviderManagerInterface
+{
     public function has($provider);
 
     public function getType($provider);
@@ -17,4 +16,4 @@ interface ProviderManagerInterface {
 
     public function getStorageService($provider);
 
-} 
+}
