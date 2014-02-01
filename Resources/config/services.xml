@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="oryzone_oauth.redirect.default_path">/</parameter>
+
+        <parameter key="oryzone_oauth.service_factory.class">OAuth\ServiceFactory</parameter>
+        <parameter key="oryzone_oauth.storage.memory.class">OAuth\Common\Storage\Memory</parameter>
+        <parameter key="oryzone_oauth.storage.redis.class">OAuth\Common\Storage\Redis</parameter>
+        <parameter key="oryzone_oauth.storage.redis.key">oryzone_oauth_token</parameter>
+        <parameter key="oryzone_oauth.storage.redis.service_name">snc_redis.default</parameter>
+        <parameter key="oryzone_oauth.storage.session.class">OAuth\Common\Storage\Session</parameter>
+        <parameter key="oryzone_oauth.storage.session.start_session">true</parameter>
+        <parameter key="oryzone_oauth.storage.session.session_variable_name">oryzone_oauth_token</parameter>
+        <parameter key="oryzone_oauth.storage.symfony_session.class">OAuth\Common\Storage\SymfonySession</parameter>
+        <parameter key="oryzone_oauth.storage.symfony_session.start_session">true</parameter>
+        <parameter key="oryzone_oauth.storage.symfony_session.session_variable_name">oryzone_oauth_tokens</parameter>
+        <parameter key="oryzone_oauth.provider_manager.class">Oryzone\Bundle\OAuthBundle\ProviderManager\ProviderManager</parameter>
+    </parameters>
+
+    <services>
+        <!-- Service Factory -->
+        <service id="oryzone_oauth.service_factory" class="%oryzone_oauth.service_factory.class%">
+        </service>
+
+        <!-- Storage -->
+        <service id="oryzone_oauth.storage.memory" class="%oryzone_oauth.storage.memory.class%" public="false">
+        </service>
+        <service id="oryzone_oauth.storage.redis" class="%oryzone_oauth.storage.redis.class%" public="false">
+            <argument/>
+            <argument>%oryzone_oauth.storage.redis.key%</argument>
+        </service>
+        <service id="oryzone_oauth.storage.session" class="%oryzone_oauth.storage.session.class%" public="false">
+            <argument>%oryzone_oauth.storage.session.start_session%</argument>
+            <argument>%oryzone_oauth.storage.session.session_variable_name%</argument>
+        </service>
+        <service id="oryzone_oauth.storage.symfony_session" class="%oryzone_oauth.storage.symfony_session.class%" public="false">
+            <argument/> <!-- session -->
+            <argument>%oryzone_oauth.storage.symfony_session.start_session%</argument>
+            <argument>%oryzone_oauth.storage.symfony_session.session_variable_name%</argument>
+        </service>
+
+        <!-- default storage -->
+        <service id="oryzone_oauth.storage" alias="oryzone_oauth.storage.symfony_session"/>
+
+        <!-- provider manager -->
+        <service id="oryzone_oauth.provider_manager" class="%oryzone_oauth.provider_manager.class%">
+            <argument/> <!-- providers -->
+        </service>
+    </services>
+
+</container>
