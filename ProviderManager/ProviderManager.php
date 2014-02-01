@@ -22,13 +22,13 @@ class ProviderManager implements ProviderManagerInterface
         return $this->providers[$provider]['type'];
     }
 
-    public function getConsumerId($provider)
+    public function getAppKey($provider)
     {
         // TODO: check data
-        return $this->providers[$provider]['id'];
+        return $this->providers[$provider]['key'];
     }
 
-    public function getConsumerSecret($provider)
+    public function getAppSecret($provider)
     {
         // TODO: check data
         return $this->providers[$provider]['secret'];

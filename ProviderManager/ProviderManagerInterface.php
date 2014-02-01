@@ -8,9 +8,9 @@ interface ProviderManagerInterface
 
     public function getType($provider);
 
-    public function getConsumerId($provider);
+    public function getAppKey($provider);
 
-    public function getConsumerSecret($provider);
+    public function getAppSecret($provider);
 
     public function getScopes($provider);
 

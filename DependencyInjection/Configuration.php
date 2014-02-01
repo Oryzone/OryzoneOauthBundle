@@ -45,7 +45,7 @@ class Configuration implements ConfigurationInterface
                     ->prototype('array')
                         ->children()
                             ->scalarNode('type')->cannotBeEmpty()->end()
-                            ->scalarNode('id')->cannotBeEmpty()->end()
+                            ->scalarNode('key')->cannotBeEmpty()->end()
                             ->scalarNode('secret')->cannotBeEmpty()->end()
                             ->arrayNode('scopes')
                                 ->prototype('scalar')->end()

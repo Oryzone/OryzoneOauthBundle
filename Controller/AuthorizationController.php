@@ -18,7 +18,7 @@ class AuthorizationController extends Controller
      * @param  string                                                        $provider
      * @param  Request                                                       $request
      * @throws Exception\AuthorizationException                              if the user does not authorize the access
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException if an unexistent provider has been given
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException if an non-existent provider has been given
      * @return array|RedirectResponse
      */
     public function authorizeAction($provider, Request $request)
@@ -42,32 +42,62 @@ class AuthorizationController extends Controller
             array('provider' => $providerType, 'redirect' => $redirectUrl), UrlGeneratorInterface::ABSOLUTE_URL);
 
         $credentials = new Credentials(
-            $providerManager->getConsumerId($provider),
-            $providerManager->getConsumerSecret($provider),
+            $providerManager->getAppKey($provider),
+            $providerManager->getAppSecret($provider),
             $callBackUrl
         );
 
         $serviceFactory = new ServiceFactory();
 
         /**
-         * @var \OAuth\OAuth2\Service\ServiceInterface $service
+         * @var \OAuth\OAuth2\Service\ServiceInterface|\OAuth\OAuth1\Service\ServiceInterface $service
          */
         $service = $serviceFactory->createService($providerType, $credentials, $storage, $providerManager->getScopes($provider));
 
-        // TODO act according OAuth version than can be read with $service::OAUTH_VERSION;
+        $oauthVersion = $service::OAUTH_VERSION;
 
-        if ($request->query->has('error')) {
-            $error = $request->query->get('error');
-            $errorReason = $request->query->get('error_reason');
-            $message = $request->query->get('error_description');
-            $errorCode = $request->query->get('error_code', 500);
-            throw new AuthorizationException($error, $errorReason, $provider, $redirectUrl, $message, $errorCode);
-        } elseif ($request->query->has('code')) {
-            $service->requestAccessToken($request->query->get('code'));
-            // TODO handle invalid code
-            return new RedirectResponse($redirectUrl);
+        if ($oauthVersion == 1) {
+            // OAUTH 1
+
+            if ($request->query->has('denied')) {
+                $error = 'denied';
+                $errorReason = 'denied';
+                $message = sprintf('User denied the request token "%s"!', $request->query->get('denied'));
+                throw new AuthorizationException($error, $errorReason, $provider, $redirectUrl, $message);
+            } elseif ($request->query->has('oauth_token')) {
+                $token = $storage->retrieveAccessToken(ucfirst($provider));
+                $service->requestAccessToken(
+                    $request->query->get('oauth_token'),
+                    $request->query->get('oauth_verifier'),
+                    $token->getRequestTokenSecret()
+                );
+
+                // Access token obtained and stored, can redirect
+                return new RedirectResponse($redirectUrl);
+            }
+
+            $token = $service->requestRequestToken();
+
+            return new RedirectResponse($service->getAuthorizationUri(array('oauth_token' => $token->getRequestToken()))->getAbsoluteUri());
+
+        } else {
+            // OAUTH 2
+
+            if ($request->query->has('error')) {
+                $error = $request->query->get('error');
+                $errorReason = $request->query->get('error_reason');
+                $message = $request->query->get('error_description');
+                $errorCode = $request->query->get('error_code', 500);
+                throw new AuthorizationException($error, $errorReason, $provider, $redirectUrl, $message, $errorCode);
+            } elseif ($request->query->has('code')) {
+                $service->requestAccessToken($request->query->get('code'));
+
+                // Access token obtained and stored, can redirect
+                return new RedirectResponse($redirectUrl);
+            }
+
+            return new RedirectResponse($service->getAuthorizationUri()->getAbsoluteUri());
         }
 
-        return new RedirectResponse($service->getAuthorizationUri()->getAbsoluteUri());
     }
 }
