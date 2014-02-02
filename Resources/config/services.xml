@@ -6,19 +6,14 @@
 
     <parameters>
         <parameter key="oryzone_oauth.redirect.default_path">/</parameter>
-
         <parameter key="oryzone_oauth.service_factory.class">OAuth\ServiceFactory</parameter>
         <parameter key="oryzone_oauth.storage.memory.class">OAuth\Common\Storage\Memory</parameter>
-        <parameter key="oryzone_oauth.storage.redis.class">OAuth\Common\Storage\Redis</parameter>
-        <parameter key="oryzone_oauth.storage.redis.key">oryzone_oauth_token</parameter>
-        <parameter key="oryzone_oauth.storage.redis.service_name">snc_redis.default</parameter>
-        <parameter key="oryzone_oauth.storage.session.class">OAuth\Common\Storage\Session</parameter>
+        <parameter key="oryzone_oauth.storage.session.class">OAuth\Common\Storage\SymfonySession</parameter>
         <parameter key="oryzone_oauth.storage.session.start_session">true</parameter>
-        <parameter key="oryzone_oauth.storage.session.session_variable_name">oryzone_oauth_token</parameter>
-        <parameter key="oryzone_oauth.storage.symfony_session.class">OAuth\Common\Storage\SymfonySession</parameter>
-        <parameter key="oryzone_oauth.storage.symfony_session.start_session">true</parameter>
-        <parameter key="oryzone_oauth.storage.symfony_session.session_variable_name">oryzone_oauth_tokens</parameter>
-        <parameter key="oryzone_oauth.provider_manager.class">Oryzone\Bundle\OAuthBundle\ProviderManager\ProviderManager</parameter>
+        <parameter key="oryzone_oauth.storage.session.session_variable_name">oryzone_oauth_tokens</parameter>
+        <parameter key="oryzone_oauth.storage_factory.class">Oryzone\Bundle\OauthBundle\Storage\StorageFactory</parameter>
+        <parameter key="oryzone_oauth.provider_manager.class">Oryzone\Bundle\OauthBundle\ProviderManager\ProviderManager</parameter>
+        <parameter key="oryzone_oauth.authorization_handler.class">Oryzone\Bundle\OauthBundle\Authorization\AuthorizationHandler</parameter>
     </parameters>
 
     <services>
@@ -27,28 +22,33 @@
         </service>
 
         <!-- Storage -->
-        <service id="oryzone_oauth.storage.memory" class="%oryzone_oauth.storage.memory.class%" public="false">
+        <service id="oryzone_oauth.storage.memory" class="%oryzone_oauth.storage.memory.class%">
+            <tag name="oryzone_oauth_storage" alias="memory"/>
         </service>
-        <service id="oryzone_oauth.storage.redis" class="%oryzone_oauth.storage.redis.class%" public="false">
-            <argument/>
-            <argument>%oryzone_oauth.storage.redis.key%</argument>
-        </service>
-        <service id="oryzone_oauth.storage.session" class="%oryzone_oauth.storage.session.class%" public="false">
+        <service id="oryzone_oauth.storage.session" class="%oryzone_oauth.storage.session.class%">
+            <argument type="service" id="session"/>
             <argument>%oryzone_oauth.storage.session.start_session%</argument>
             <argument>%oryzone_oauth.storage.session.session_variable_name%</argument>
-        </service>
-        <service id="oryzone_oauth.storage.symfony_session" class="%oryzone_oauth.storage.symfony_session.class%" public="false">
-            <argument/> <!-- session -->
-            <argument>%oryzone_oauth.storage.symfony_session.start_session%</argument>
-            <argument>%oryzone_oauth.storage.symfony_session.session_variable_name%</argument>
+            <tag name="oryzone_oauth_storage" alias="session"/>
         </service>
 
-        <!-- default storage -->
-        <service id="oryzone_oauth.storage" alias="oryzone_oauth.storage.symfony_session"/>
+        <!-- storage factory -->
+        <service id="oryzone_oauth.storage_factory" class="%oryzone_oauth.storage_factory.class%">
+            <argument/> <!-- storage services -->
+            <argument type="service" id="service_container"/>
+        </service>
 
         <!-- provider manager -->
         <service id="oryzone_oauth.provider_manager" class="%oryzone_oauth.provider_manager.class%">
             <argument/> <!-- providers -->
+        </service>
+
+        <!-- authorization handler -->
+        <service id="oryzone_oauth.authorization_handler" class="%oryzone_oauth.authorization_handler.class%">
+            <argument type="service" id="oryzone_oauth.provider_manager"/>
+            <argument type="service" id="oryzone_oauth.storage_factory"/>
+            <argument type="service" id="router"/>
+            <argument>%oryzone_oauth.redirect.default_path%</argument>
         </service>
     </services>
 

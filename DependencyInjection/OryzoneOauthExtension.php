@@ -27,10 +27,6 @@ class OryzoneOauthExtension extends Extension
             $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
             $loader->load('services.xml');
 
-            // set parameter for the symfony session storage
-            $symfonySessionStorageDefinition = $container->getDefinition('oryzone_oauth.storage.symfony_session');
-            $symfonySessionStorageDefinition->replaceArgument(0, new Reference('session'));
-
             // set parameter for the provider manager from config
             $providerManagerDefinition = $container->getDefinition('oryzone_oauth.provider_manager');
             $providerManagerDefinition->replaceArgument(0, $config['providers']);

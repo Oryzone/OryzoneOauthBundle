@@ -1,6 +1,6 @@
 <?php
 
-namespace Oryzone\Bundle\OauthBundle\Controller\Exception;
+namespace Oryzone\Bundle\OauthBundle\Authorization\Exception;
 
 class AuthorizationException extends \Exception
 {

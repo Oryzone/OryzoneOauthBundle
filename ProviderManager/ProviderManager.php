@@ -2,6 +2,8 @@
 
 namespace Oryzone\Bundle\OauthBundle\ProviderManager;
 
+use Oryzone\Bundle\OauthBundle\ProviderManager\Exception\UndefinedProviderException;
+
 class ProviderManager implements ProviderManagerInterface
 {
     protected $providers;
@@ -18,31 +20,38 @@ class ProviderManager implements ProviderManagerInterface
 
     public function getType($provider)
     {
-        // TODO: check data
+        $this->checkExistence($provider);
         return $this->providers[$provider]['type'];
     }
 
     public function getAppKey($provider)
     {
-        // TODO: check data
+        $this->checkExistence($provider);
         return $this->providers[$provider]['key'];
     }
 
     public function getAppSecret($provider)
     {
-        // TODO: check data
+        $this->checkExistence($provider);
         return $this->providers[$provider]['secret'];
     }
 
     public function getScopes($provider)
     {
-        // TODO: check data
+        $this->checkExistence($provider);
         return $this->providers[$provider]['scopes'];
     }
 
     public function getStorageService($provider)
     {
-        // TODO: check data
+        $this->checkExistence($provider);
         return $this->providers[$provider]['storageService'];
+    }
+
+    private function checkExistence($provider)
+    {
+        if (!isset($this->providers[$provider])) {
+            throw new UndefinedProviderException($provider, array_keys($this->providers));
+        }
     }
 }

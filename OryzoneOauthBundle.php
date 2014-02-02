@@ -17,8 +17,16 @@
  */
 namespace Oryzone\Bundle\OauthBundle;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+
+use Oryzone\Bundle\OauthBundle\DependencyInjection\Compiler\StorageCompilerPass;
 
 class OryzoneOauthBundle extends Bundle
 {
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+        $container->addCompilerPass(new StorageCompilerPass());
+    }
 }

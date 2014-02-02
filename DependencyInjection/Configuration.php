@@ -51,7 +51,7 @@ class Configuration implements ConfigurationInterface
                                 ->prototype('scalar')->end()
                             ->end()
                             ->scalarNode('storageService')
-                                ->defaultValue('oryzone_oauth.storage')
+                                ->defaultValue('session')
                                 ->cannotBeEmpty()
                             ->end()
                         ->end()
