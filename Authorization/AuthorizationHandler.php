@@ -14,17 +14,42 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * Class AuthorizationHandler
+ * @package Oryzone\Bundle\OauthBundle\Authorization
+ *
+ * Handles the whole authorization process for both Oauth 1 and 2
+ */
 class AuthorizationHandler implements AuthorizationHandlerInterface
 {
-
+    /**
+     * @var \Oryzone\Bundle\OauthBundle\ProviderManager\ProviderManagerInterface $providerManager
+     */
     protected $providerManager;
 
+    /**
+     * @var \Oryzone\Bundle\OauthBundle\Storage\StorageFactoryInterface $storageFactory
+     */
     protected $storageFactory;
 
+    /**
+     * @var \Symfony\Component\Routing\RouterInterface $router
+     */
     protected $router;
 
+    /**
+     * @var string $defaultRedirectPath
+     */
     protected $defaultRedirectPath;
 
+    /**
+     * Constructor
+     *
+     * @param ProviderManagerInterface $providerManager
+     * @param StorageFactoryInterface  $storageFactory
+     * @param RouterInterface          $router
+     * @param string                   $defaultRedirectPath
+     */
     public function __construct(ProviderManagerInterface $providerManager, StorageFactoryInterface $storageFactory, RouterInterface $router, $defaultRedirectPath)
     {
         $this->providerManager = $providerManager;
@@ -33,6 +58,9 @@ class AuthorizationHandler implements AuthorizationHandlerInterface
         $this->defaultRedirectPath = $defaultRedirectPath;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function handle(AuthorizationProcedure $authorizationProcedure, Request $request)
     {
         $provider = $authorizationProcedure->getProvider();

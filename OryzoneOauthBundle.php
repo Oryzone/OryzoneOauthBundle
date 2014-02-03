@@ -22,6 +22,10 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use Oryzone\Bundle\OauthBundle\DependencyInjection\Compiler\StorageCompilerPass;
 
+/**
+ * Class OryzoneOauthBundle
+ * @package Oryzone\Bundle\OauthBundle
+ */
 class OryzoneOauthBundle extends Bundle
 {
     public function build(ContainerBuilder $container)

@@ -9,6 +9,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class AuthorizationController
+ * @package Oryzone\Bundle\OauthBundle\Controller
+ *
+ * Default controller to handle authorization
+ */
 class AuthorizationController extends Controller
 {
     /**

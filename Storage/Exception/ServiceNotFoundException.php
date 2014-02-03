@@ -4,13 +4,29 @@ namespace Oryzone\Bundle\OauthBundle\Storage\Exception;
 
 use Oryzone\Bundle\OauthBundle\Exception\Exception;
 
+/**
+ * Class ServiceNotFoundException
+ * @package Oryzone\Bundle\OauthBundle\Storage\Exception
+ */
 class ServiceNotFoundException extends \Exception implements Exception
 {
 
+    /**
+     * @var string $key
+     */
     protected $key;
 
+    /**
+     * @var string $serviceName
+     */
     protected $serviceName;
 
+    /**
+     * Constructor
+     *
+     * @param string $key         the alias of the storage service
+     * @param string $serviceName the associated service name
+     */
     public function __construct($key, $serviceName)
     {
         $this->key = $key;
@@ -19,14 +35,24 @@ class ServiceNotFoundException extends \Exception implements Exception
         parent::__construct($message);
     }
 
+    /**
+     * Get the key
+     *
+     * @return string
+     */
     public function getKey()
     {
         return $this->key;
     }
 
+    /**
+     * Get the service name
+     *
+     * @return string
+     */
     public function getServiceName()
     {
-        return $this->serviceName();
+        return $this->serviceName;
     }
 
 }

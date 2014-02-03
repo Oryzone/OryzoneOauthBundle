@@ -8,23 +8,47 @@ use Oryzone\Bundle\OauthBundle\Storage\Exception\InvalidServiceException;
 use Oryzone\Bundle\OauthBundle\Storage\Exception\ServiceNotFoundException;
 use Oryzone\Bundle\OauthBundle\Storage\Exception\UndefinedKeyException;
 
+/**
+ * Class StorageFactory
+ * @package Oryzone\Bundle\OauthBundle\Storage
+ *
+ * Instantiates a storage
+ */
 class StorageFactory implements StorageFactoryInterface
 {
+    /**
+     * @var array $services
+     */
     protected $services;
 
+    /**
+     * @var \Symfony\Component\DependencyInjection\ContainerInterface $container
+     */
     protected $container;
 
+    /**
+     * Constructor
+     *
+     * @param array              $services
+     * @param ContainerInterface $container
+     */
     public function __construct($services, ContainerInterface $container)
     {
         $this->services = $services;
         $this->container = $container;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function has($key)
     {
         return isset($this->services[$key]) && $this->container->has($this->services[$key]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function get($key)
     {
         if (!isset($this->services[$key])) {

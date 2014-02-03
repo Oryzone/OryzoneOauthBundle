@@ -4,13 +4,31 @@ namespace Oryzone\Bundle\OauthBundle\ProviderManager\Exception;
 
 use Oryzone\Bundle\OauthBundle\Exception\Exception;
 
+/**
+ * Class UndefinedProviderException
+ * @package Oryzone\Bundle\OauthBundle\ProviderManager\Exception
+ *
+ * Used to define undefined provider exception
+ */
 class UndefinedProviderException extends \Exception implements Exception
 {
 
+    /**
+     * @var string $provider
+     */
     protected $provider;
 
+    /**
+     * @var array $definedProviders
+     */
     protected $definedProviders;
 
+    /**
+     * Constructor
+     *
+     * @param string $provider
+     * @param array  $definedProviders
+     */
     public function __construct($provider, $definedProviders = array())
     {
         $this->provider = $provider;
@@ -20,11 +38,21 @@ class UndefinedProviderException extends \Exception implements Exception
         parent::__construct($message);
     }
 
+    /**
+     * Get the name of the provider
+     *
+     * @return string
+     */
     public function getProvider()
     {
         return $this->provider;
     }
 
+    /**
+     * Get an array of all the defined providers
+     *
+     * @return array
+     */
     public function getDefinedProviders()
     {
         return $this->definedProviders;

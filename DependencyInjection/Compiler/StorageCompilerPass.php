@@ -6,6 +6,10 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * Class StorageCompilerPass
+ * @package Oryzone\Bundle\OauthBundle\DependencyInjection\Compiler
+ */
 class StorageCompilerPass implements CompilerPassInterface
 {
     const STORAGE_SERVICE_TAG = 'oryzone_oauth_storage';
