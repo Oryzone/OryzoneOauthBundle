@@ -15,3 +15,7 @@ It still needs:
 - [ ] scrutinizer integration
 - [ ] consider integration with symfony security
 - [ ] consider integration with FOS user bundle
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Oryzone/oryzoneoauthbundle/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
