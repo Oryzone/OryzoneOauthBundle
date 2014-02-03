@@ -1,0 +1,3 @@
+tools:
+    php_code_coverage:
+        test_command: phpunit -c ./
