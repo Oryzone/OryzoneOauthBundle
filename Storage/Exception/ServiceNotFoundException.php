@@ -2,7 +2,9 @@
 
 namespace Oryzone\Bundle\OauthBundle\Storage\Exception;
 
-class ServiceNotFoundException extends \Exception
+use Oryzone\Bundle\OauthBundle\Exception\Exception;
+
+class ServiceNotFoundException extends \Exception implements Exception
 {
 
     protected $key;

@@ -2,7 +2,9 @@
 
 namespace Oryzone\Bundle\OauthBundle\Storage\Exception;
 
-class InvalidServiceException extends \Exception
+use Oryzone\Bundle\OauthBundle\Exception\Exception;
+
+class InvalidServiceException extends \Exception implements Exception
 {
     protected $serviceName;
 

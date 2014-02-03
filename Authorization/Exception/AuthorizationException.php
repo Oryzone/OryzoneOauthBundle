@@ -2,7 +2,9 @@
 
 namespace Oryzone\Bundle\OauthBundle\Authorization\Exception;
 
-class AuthorizationException extends \Exception
+use Oryzone\Bundle\OauthBundle\Exception\Exception;
+
+class AuthorizationException extends \Exception implements Exception
 {
 
     protected $error;

@@ -2,7 +2,9 @@
 
 namespace Oryzone\Bundle\OauthBundle\ProviderManager\Exception;
 
-class UndefinedProviderException extends \Exception
+use Oryzone\Bundle\OauthBundle\Exception\Exception;
+
+class UndefinedProviderException extends \Exception implements Exception
 {
 
     protected $provider;

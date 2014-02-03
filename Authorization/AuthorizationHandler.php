@@ -3,6 +3,7 @@
 namespace Oryzone\Bundle\OauthBundle\Authorization;
 
 use OAuth\Common\Consumer\Credentials;
+use OAuth\Common\Http\Exception\TokenResponseException;
 use OAuth\ServiceFactory;
 
 use Oryzone\Bundle\OauthBundle\Authorization\Exception\AuthorizationException;
@@ -75,13 +76,19 @@ class AuthorizationHandler implements AuthorizationHandlerInterface
 
                 // user gave permission
 
-                // TODO handle invalid request token or other exceptions
                 $requestToken = $storage->retrieveAccessToken(ucfirst($provider));
-                $accessToken = $service->requestAccessToken(
-                    $request->query->get('oauth_token'),
-                    $request->query->get('oauth_verifier'),
-                    $requestToken->getRequestTokenSecret()
-                );
+
+                try {
+                    $accessToken = $service->requestAccessToken(
+                        $request->query->get('oauth_token'),
+                        $request->query->get('oauth_verifier'),
+                        $requestToken->getRequestTokenSecret()
+                    );
+                } catch (TokenResponseException $e) {
+                    $error = 'Cannot parse token';
+                    $errorReason = 'TokenResponseException';
+                    throw new AuthorizationException($error, $errorReason, $provider, $redirectUrl, $e->getMessage(), $e->getCode(), $e);
+                }
 
                 $authorizationProcedure->setAccessToken($accessToken);
                 // Access token obtained and stored, can redirect
@@ -91,8 +98,14 @@ class AuthorizationHandler implements AuthorizationHandlerInterface
 
                 // needs to prompt the user to authorize the app
 
-                // TODO handle invalid request token or other exceptions
-                $token = $service->requestRequestToken();
+                try {
+                    // in oauth1 we need a request token to build the authorization uri for the user
+                    $token = $service->requestRequestToken();
+                } catch (TokenResponseException $e) {
+                    $error = 'Cannot parse request token';
+                    $errorReason = 'TokenResponseException';
+                    throw new AuthorizationException($error, $errorReason, $provider, $redirectUrl, $e->getMessage(), $e->getCode(), $e);
+                }
 
                 $authorizationProcedure->setRedirectUrl($service->getAuthorizationUri(array('oauth_token' => $token->getRequestToken()))->getAbsoluteUri());
             }
@@ -112,10 +125,15 @@ class AuthorizationHandler implements AuthorizationHandlerInterface
 
             } elseif ($request->query->has('code')) {
 
-                // user gave permission
+                // user gave permission, trying to retrieve the access token
+                try {
+                    $accessToken = $service->requestAccessToken($request->query->get('code'));
+                } catch (TokenResponseException $e) {
+                    $error = 'Cannot parse token';
+                    $errorReason = 'TokenResponseException';
+                    throw new AuthorizationException($error, $errorReason, $provider, $redirectUrl, $e->getMessage(), $e->getCode(), $e);
+                }
 
-                // TODO handle invalid request token or other exceptions
-                $accessToken = $service->requestAccessToken($request->query->get('code'));
                 $authorizationProcedure->setAccessToken($accessToken);
 
                 // Access token obtained and stored, can redirect

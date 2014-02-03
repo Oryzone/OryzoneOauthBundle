@@ -3,8 +3,9 @@
 namespace Oryzone\Bundle\OauthBundle\Storage\Exception;
 
 use Oryzone\Bundle\OauthBundle\DependencyInjection\Compiler\StorageCompilerPass;
+use Oryzone\Bundle\OauthBundle\Exception\Exception;
 
-class UndefinedKeyException extends \Exception
+class UndefinedKeyException extends \Exception implements Exception
 {
     protected $key;
 
