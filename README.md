@@ -3,19 +3,11 @@ OryzoneOauthBundle
 
 Symfony2 OAuth bundle using PHPoAuthLib -- WORK IN PROGRESS
 
-DON'T USE IT RIGHT NOW
+[![Total Downloads](https://poser.pugx.org/oryzone/oauth-bundle/downloads.png)](https://packagist.org/packages/oryzone/oauth-bundle) [![Latest Stable Version](https://poser.pugx.org/oryzone/oauth-bundle/v/stable.png)](https://packagist.org/packages/oryzone/oauth-bundle)
 
-It still needs:
+CURRENTLY UNDER DEVELOPMENT: DON'T USE IT RIGHT NOW!
 
-- [ ] proper exception handling
-- [ ] unit tests
-- [ ] integration with composer
-- [ ] way to generalize oauth1 and oauth2 to provide new services from runtime
-- [ ] travis CI integration
-- [ ] scrutinizer integration
-- [ ] consider integration with symfony security
-- [ ] consider integration with FOS user bundle
-
+If you want to contribute: have a look at the code and the issue and [write me an e-mail](mailto:lmammino@oryzone.com)
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Oryzone/oryzoneoauthbundle/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
