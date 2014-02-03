@@ -1,3 +1,6 @@
 tools:
     php_code_coverage:
         test_command: phpunit -c ./
+
+before_commands:
+    - composer install --dev
