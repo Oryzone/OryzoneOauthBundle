@@ -13,6 +13,10 @@ namespace Oryzone\Bundle\OauthBundle\Authorization;
 
 use OAuth\Common\Token\TokenInterface;
 
+use Oryzone\Bundle\OauthBundle\Authorization\Error\ErrorInterface;
+
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 /**
  * Class AuthorizationProcedure
  * @package Oryzone\Bundle\OauthBundle\Authorization
@@ -37,6 +41,16 @@ class AuthorizationProcedure implements AuthorizationProcedureInterface
     protected $accessToken;
 
     /**
+     * @var bool $success
+     */
+    protected $success;
+
+    /**
+     * @var null|Error\ErrorInterface $error
+     */
+    protected $error;
+
+    /**
      * Constructor
      *
      * @param string $provider
@@ -44,6 +58,7 @@ class AuthorizationProcedure implements AuthorizationProcedureInterface
     public function __construct($provider)
     {
         $this->provider = $provider;
+        $this->success = false;
     }
 
     /**
@@ -81,6 +96,14 @@ class AuthorizationProcedure implements AuthorizationProcedureInterface
     /**
      * {@inheritDoc}
      */
+    public function generateRedirectResponse()
+    {
+        return new RedirectResponse($this->redirectUrl);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function hasAccessToken()
     {
         return ($this->accessToken !== null);
@@ -100,6 +123,46 @@ class AuthorizationProcedure implements AuthorizationProcedureInterface
     public function setAccessToken(TokenInterface $accessToken)
     {
         $this->accessToken = $accessToken;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function succeeded()
+    {
+        return $this->success;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setSuccess($success)
+    {
+        $this->success = $success;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasError()
+    {
+        return ($this->error !== null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setError(ErrorInterface $error)
+    {
+        $this->error = $error;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getError()
+    {
+        return $this->error;
     }
 
 }

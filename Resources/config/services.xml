@@ -5,7 +5,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="oryzone_oauth.redirect.default_path">/</parameter>
+        <parameter key="oryzone_oauth.redirect.default_target_path">/</parameter>
         <parameter key="oryzone_oauth.service_factory.class">OAuth\ServiceFactory</parameter>
         <parameter key="oryzone_oauth.storage.memory.class">OAuth\Common\Storage\Memory</parameter>
         <parameter key="oryzone_oauth.storage.session.class">OAuth\Common\Storage\SymfonySession</parameter>
@@ -14,6 +14,8 @@
         <parameter key="oryzone_oauth.storage_factory.class">Oryzone\Bundle\OauthBundle\Storage\StorageFactory</parameter>
         <parameter key="oryzone_oauth.provider_manager.class">Oryzone\Bundle\OauthBundle\ProviderManager\ProviderManager</parameter>
         <parameter key="oryzone_oauth.authorization_handler.class">Oryzone\Bundle\OauthBundle\Authorization\AuthorizationHandler</parameter>
+        <parameter key="oryzone_oauth.error_handler.render_template.class">Oryzone\Bundle\OauthBundle\Authorization\ErrorHandler\RenderTemplateErrorHandler</parameter>
+        <parameter key="oryzone_oauth.error_handler.render_template.template">OryzoneOauthBundle::Error.html.twig</parameter>
     </parameters>
 
     <services>
@@ -48,8 +50,16 @@
             <argument type="service" id="oryzone_oauth.provider_manager"/>
             <argument type="service" id="oryzone_oauth.storage_factory"/>
             <argument type="service" id="router"/>
-            <argument>%oryzone_oauth.redirect.default_path%</argument>
+            <argument>%oryzone_oauth.redirect.default_target_path%</argument>
         </service>
+
+        <!-- authorization error handler -->
+        <service id="oryzone_oauth.error_handler.render_template" class="%oryzone_oauth.error_handler.render_template.class%">
+            <argument type="service" id="templating"/>
+            <argument>%oryzone_oauth.error_handler.render_template.template%</argument>
+        </service>
+
+        <service id="oryzone_oauth.error_handler" alias="oryzone_oauth.error_handler.render_template"/>
     </services>
 
 </container>

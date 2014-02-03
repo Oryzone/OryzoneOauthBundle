@@ -1,0 +1,9 @@
+{% extends "OryzoneOauthBundle::base.html.twig" %}
+
+{% block title %}Authorization failed{% endblock %}
+
+{% block body %}
+<h1>Authorization failed</h1>
+<h2>{{ error.getDescription() }}</h2>
+<p><a href="{{ error.getTargetPath() }}">Go back</a></p>
+{% endblock %}

@@ -12,10 +12,10 @@
 namespace Oryzone\Bundle\OauthBundle\Controller;
 
 use Oryzone\Bundle\OauthBundle\Authorization\AuthorizationProcedure;
-use Oryzone\Bundle\OauthBundle\Authorization\Exception\AuthorizationException;
+use Oryzone\Bundle\OauthBundle\Authorization\Error\ErrorInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -30,7 +30,7 @@ class AuthorizationController extends Controller
      * @param  string                                                        $provider
      * @param  Request                                                       $request
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException if an non-existent provider has been given
-     * @return array|RedirectResponse
+     * @return Response
      */
     public function authorizeAction($provider, Request $request)
     {
@@ -40,15 +40,25 @@ class AuthorizationController extends Controller
             throw $this->createNotFoundException(sprintf('Invalid oauth provider "%s"', $provider));
         }
 
-        $authorizationHandler = $this->get('oryzone_oauth.authorization_handler');
-        $authorizationProcedure = new AuthorizationProcedure($provider);
-        try {
-            $authorizationHandler->handle($authorizationProcedure, $request);
-            if ($authorizationProcedure->mustRedirect()) {
-                return new RedirectResponse($authorizationProcedure->getRedirectUrl());
-            }
-        } catch (AuthorizationException $e) {
-            // TODO decide how to handle this kind of exceptions
+        $handler = $this->get('oryzone_oauth.authorization_handler');
+        $procedure = new AuthorizationProcedure($provider);
+
+        $handler->handle($procedure, $request);
+        if ($procedure->hasError()) {
+            return $this->handleAuthorizationError($procedure->getError());
+        } elseif ($procedure->mustRedirect()) {
+            return $procedure->generateRedirectResponse();
         }
+    }
+
+    /**
+     * @param  ErrorInterface $error
+     * @return Response
+     */
+    protected function handleAuthorizationError(ErrorInterface $error)
+    {
+        $errorHandler = $this->get('oryzone_oauth.error_handler');
+
+        return $errorHandler->handle($error);
     }
 }
