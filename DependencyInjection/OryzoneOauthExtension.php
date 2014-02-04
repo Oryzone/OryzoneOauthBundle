@@ -34,6 +34,9 @@ class OryzoneOauthExtension extends Extension
             $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
             $loader->load('services.xml');
 
+            // create a parameter to mark the bundle as enabled
+            $container->setParameter('oryzone_oauth.enabled', true);
+
             // set parameter for the provider manager from config
             $providerManagerDefinition = $container->getDefinition('oryzone_oauth.provider_manager');
             $providerManagerDefinition->replaceArgument(0, $config['providers']);

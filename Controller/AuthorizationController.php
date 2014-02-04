@@ -34,6 +34,11 @@ class AuthorizationController extends Controller
      */
     public function authorizeAction($provider, Request $request)
     {
+        $enabled = $this->container->getParameter('oryzone_oauth.enabled');
+        if (!$enabled) {
+            throw $this->createNotFoundException('Oryzone OAuth Bundle is not enabled');
+        }
+
         $providerManager = $this->get('oryzone_oauth.provider_manager');
 
         if (!$providerManager->has($provider)) {
