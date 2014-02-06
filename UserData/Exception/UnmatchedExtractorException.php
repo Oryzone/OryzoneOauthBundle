@@ -35,7 +35,7 @@ class UnmatchedExtractorException extends \Exception implements Exception
      * Constructor
      *
      * @param \OAuth\Common\Service\ServiceInterface $service
-     * @param array                                         $registeredExtractors
+     * @param array                                  $registeredExtractors
      */
     public function __construct(ServiceInterface $service, $registeredExtractors = array())
     {

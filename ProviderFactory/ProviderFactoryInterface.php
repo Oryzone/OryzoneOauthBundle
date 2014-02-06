@@ -35,4 +35,11 @@ interface ProviderFactoryInterface
      */
     public function get($provider, $callbackUrl = null);
 
+    /**
+     * @param  string                               $provider
+     * @return \OAuth\Common\Token\TokenInterface
+     * @throws Exception\UndefinedProviderException
+     */
+    public function getAccessToken($provider);
+
 }

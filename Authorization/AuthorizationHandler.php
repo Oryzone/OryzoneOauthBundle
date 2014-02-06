@@ -17,7 +17,6 @@ use Oryzone\Bundle\OauthBundle\Authorization\Error\DeniedError;
 use Oryzone\Bundle\OauthBundle\Authorization\Error\GenericError;
 use Oryzone\Bundle\OauthBundle\Authorization\Error\TokenExceptionError;
 use Oryzone\Bundle\OauthBundle\ProviderFactory\ProviderFactoryInterface;
-use Oryzone\Bundle\OauthBundle\Storage\StorageFactoryInterface;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -55,7 +54,6 @@ class AuthorizationHandler implements AuthorizationHandlerInterface
      * Constructor
      *
      * @param ProviderFactoryInterface $providerFactory
-     * @param StorageFactoryInterface  $storageFactory
      * @param RouterInterface          $router
      * @param string                   $defaultTargetPath
      */
@@ -100,7 +98,7 @@ class AuthorizationHandler implements AuthorizationHandlerInterface
 
                 // user gave permission
                 try {
-                    $requestToken = $storage->retrieveAccessToken(ucfirst($provider));
+                    $requestToken = $this->providerFactory->getAccessToken($provider);
                     $accessToken = $service->requestAccessToken(
                         $request->query->get('oauth_token'),
                         $request->query->get('oauth_verifier'),

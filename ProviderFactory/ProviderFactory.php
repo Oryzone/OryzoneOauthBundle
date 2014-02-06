@@ -24,7 +24,7 @@ use Oryzone\Bundle\OauthBundle\Storage\StorageFactoryInterface;
 class ProviderFactory implements ProviderFactoryInterface
 {
     /**
-     * @var OAuth\ServiceFactory $serviceFactory
+     * @var \OAuth\ServiceFactory $serviceFactory
      */
     protected $serviceFactory;
 
@@ -41,9 +41,10 @@ class ProviderFactory implements ProviderFactoryInterface
     /**
      * Constructor
      *
+     * @param \OAuth\ServiceFactory   $serviceFactory
      * @param StorageFactoryInterface $storageFactory
-     * @param $defaultTargetPath
      * @param array                   $providers
+     * @internal param $defaultTargetPath
      */
     public function __construct(ServiceFactory $serviceFactory, StorageFactoryInterface $storageFactory, $providers = array())
     {
@@ -69,8 +70,8 @@ class ProviderFactory implements ProviderFactoryInterface
             throw new UndefinedProviderException($provider, array_keys($this->providers));
         }
 
-        $storage = $this->storageFactory->get($this->providers[$provider]['storageService']);
-        $providerType = $this->providers[$provider]['type'];
+        $storage = $this->getStorage($provider);
+        $providerType = $this->getProviderType($provider);
         $appKey = $this->providers[$provider]['key'];
         $appSecret = $this->providers[$provider]['secret'];
         $scopes = $this->providers[$provider]['scopes'];
@@ -79,5 +80,43 @@ class ProviderFactory implements ProviderFactoryInterface
         $service = $this->serviceFactory->createService($providerType, $credentials, $storage, $scopes);
 
         return $service;
+    }
+
+    /**
+     * @param  string                               $provider
+     * @return \OAuth\Common\Token\TokenInterface
+     * @throws Exception\UndefinedProviderException
+     */
+    public function getAccessToken($provider)
+    {
+        if (!$this->has($provider)) {
+            throw new UndefinedProviderException($provider, array_keys($this->providers));
+        }
+
+        $storage = $this->getStorage($provider);
+
+        return $storage->retrieveAccessToken(ucfirst($this->getProviderType($provider)));
+    }
+
+    /**
+     * Get the storage related to a given provider
+     *
+     * @param  string                                      $provider
+     * @return \OAuth\Common\Storage\TokenStorageInterface
+     */
+    protected function getStorage($provider)
+    {
+        return $this->storageFactory->get($this->providers[$provider]['storageService']);
+    }
+
+    /**
+     * Get the type of a given provider
+     *
+     * @param  string $provider
+     * @return string
+     */
+    protected function getProviderType($provider)
+    {
+        return $this->providers[$provider]['type'];
     }
 }
