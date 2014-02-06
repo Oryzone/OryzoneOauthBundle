@@ -9,13 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Oryzone\Bundle\OauthBundle\ProviderManager\Exception;
+namespace Oryzone\Bundle\OauthBundle\ProviderFactory\Exception;
 
 use Oryzone\Bundle\OauthBundle\Exception\Exception;
 
 /**
  * Class UndefinedProviderException
- * @package Oryzone\Bundle\OauthBundle\ProviderManager\Exception
+ * @package Oryzone\Bundle\OauthBundle\ProviderFactory\Exception
  *
  * Used to define undefined provider exception
  */

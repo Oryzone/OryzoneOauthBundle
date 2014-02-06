@@ -6,21 +6,32 @@
 
     <parameters>
         <parameter key="oryzone_oauth.redirect.default_target_path">/</parameter>
+        <parameter key="oryzone_oauth.http_client.stream.class">OAuth\Common\Http\Client\StreamClient</parameter>
+        <parameter key="oryzone_oauth.http_client.curl.class">OAuth\Common\Http\Client\CurlClient</parameter>
         <parameter key="oryzone_oauth.service_factory.class">OAuth\ServiceFactory</parameter>
         <parameter key="oryzone_oauth.storage.memory.class">OAuth\Common\Storage\Memory</parameter>
         <parameter key="oryzone_oauth.storage.session.class">OAuth\Common\Storage\SymfonySession</parameter>
         <parameter key="oryzone_oauth.storage.session.start_session">true</parameter>
         <parameter key="oryzone_oauth.storage.session.session_variable_name">oryzone_oauth_tokens</parameter>
         <parameter key="oryzone_oauth.storage_factory.class">Oryzone\Bundle\OauthBundle\Storage\StorageFactory</parameter>
-        <parameter key="oryzone_oauth.provider_manager.class">Oryzone\Bundle\OauthBundle\ProviderManager\ProviderManager</parameter>
+        <parameter key="oryzone_oauth.provider_factory.class">Oryzone\Bundle\OauthBundle\ProviderFactory\ProviderFactory</parameter>
         <parameter key="oryzone_oauth.authorization_handler.class">Oryzone\Bundle\OauthBundle\Authorization\AuthorizationHandler</parameter>
         <parameter key="oryzone_oauth.error_handler.render_template.class">Oryzone\Bundle\OauthBundle\Authorization\ErrorHandler\RenderTemplateErrorHandler</parameter>
         <parameter key="oryzone_oauth.error_handler.render_template.template">OryzoneOauthBundle::Error.html.twig</parameter>
+        <parameter key="oryzone_oauth.user_data_extractor.class">Oryzone\Bundle\OauthBundle\UserData\UserDataExtractor</parameter>
     </parameters>
 
     <services>
+        <!-- Http client -->
+        <service id="oryzone_oauth.http_client.stream" class="%oryzone_oauth.http_client.stream.class%"/>
+        <service id="oryzone_oauth.http_client.curl" class="%oryzone_oauth.http_client.curl.class%"/>
+        <service id="oryzone_oauth.http_client" alias="oryzone_oauth.http_client.curl"/>
+
         <!-- Service Factory -->
         <service id="oryzone_oauth.service_factory" class="%oryzone_oauth.service_factory.class%">
+            <call method="setHttpClient">
+                <argument type="service" id="oryzone_oauth.http_client"/>
+            </call>
         </service>
 
         <!-- Storage -->
@@ -40,15 +51,16 @@
             <argument type="service" id="service_container"/>
         </service>
 
-        <!-- provider manager -->
-        <service id="oryzone_oauth.provider_manager" class="%oryzone_oauth.provider_manager.class%">
+        <!-- provider factory -->
+        <service id="oryzone_oauth.provider_factory" class="%oryzone_oauth.provider_factory.class%">
+            <argument type="service" id="oryzone_oauth.service_factory"/>
+            <argument type="service" id="oryzone_oauth.storage_factory"/>
             <argument/> <!-- providers -->
         </service>
 
         <!-- authorization handler -->
         <service id="oryzone_oauth.authorization_handler" class="%oryzone_oauth.authorization_handler.class%">
-            <argument type="service" id="oryzone_oauth.provider_manager"/>
-            <argument type="service" id="oryzone_oauth.storage_factory"/>
+            <argument type="service" id="oryzone_oauth.provider_factory"/>
             <argument type="service" id="router"/>
             <argument>%oryzone_oauth.redirect.default_target_path%</argument>
         </service>
@@ -60,6 +72,17 @@
         </service>
 
         <service id="oryzone_oauth.error_handler" alias="oryzone_oauth.error_handler.render_template"/>
+
+        <!-- user data extractor -->
+        <service id="oryzone_oauth.user_data_extractor" class="%oryzone_oauth.user_data_extractor.class%">
+            <argument type="service" id="service_container"/>
+            <argument/> <!-- providerExtractorsMap -->
+        </service>
+
+        <!-- provider extractors -->
+        <service id="oryzone_oauth.provider_extractor_facebook" class="Oryzone\Bundle\OauthBundle\UserData\ProviderExtractor\Facebook">
+            <tag name="oryzone_oauth_provider_extractor" service="OAuth\OAuth2\Service\Facebook"/>
+        </service>
     </services>
 
 </container>

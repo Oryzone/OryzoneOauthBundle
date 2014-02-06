@@ -22,10 +22,9 @@ interface AuthorizationHandlerInterface
     /**
      * Handles a given request
      *
-     * @param  AuthorizationProcedure           $procedure
-     * @param  Request                          $request
-     * @throws Exception\AuthorizationException
-     * @return bool                             true if the procedure is going fine, false otherwise
+     * @param  AuthorizationProcedure $procedure
+     * @param  Request                $request
+     * @return bool                   true if the procedure is going fine, false otherwise
      */
     public function handle(AuthorizationProcedure $procedure, Request $request);
 

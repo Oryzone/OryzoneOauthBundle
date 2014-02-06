@@ -38,8 +38,8 @@ class OryzoneOauthExtension extends Extension
             $container->setParameter('oryzone_oauth.enabled', true);
 
             // set parameter for the provider manager from config
-            $providerManagerDefinition = $container->getDefinition('oryzone_oauth.provider_manager');
-            $providerManagerDefinition->replaceArgument(0, $config['providers']);
+            $providerFactoryDefinition = $container->getDefinition('oryzone_oauth.provider_factory');
+            $providerFactoryDefinition->replaceArgument(2, $config['providers']);
         }
     }
 }

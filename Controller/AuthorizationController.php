@@ -27,25 +27,15 @@ use Symfony\Component\HttpFoundation\Request;
 class AuthorizationController extends Controller
 {
     /**
-     * @param  string                                                        $provider
-     * @param  Request                                                       $request
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException if an non-existent provider has been given
+     * @param  string   $provider
+     * @param  Request  $request
      * @return Response
      */
     public function authorizeAction($provider, Request $request)
     {
-        $enabled = $this->container->getParameter('oryzone_oauth.enabled');
-        if (!$enabled) {
-            throw $this->createNotFoundException('Oryzone OAuth Bundle is not enabled');
-        }
+        $this->validateProvider($provider);
 
-        $providerManager = $this->get('oryzone_oauth.provider_manager');
-
-        if (!$providerManager->has($provider)) {
-            throw $this->createNotFoundException(sprintf('Invalid oauth provider "%s"', $provider));
-        }
-
-        $handler = $this->get('oryzone_oauth.authorization_handler');
+        $handler = $this->getAuthorizationHandler();
         $procedure = new AuthorizationProcedure($provider);
 
         $handler->handle($procedure, $request);
@@ -54,6 +44,64 @@ class AuthorizationController extends Controller
         } elseif ($procedure->mustRedirect()) {
             return $procedure->generateRedirectResponse();
         }
+    }
+
+    /**
+     * @param  string   $provider
+     * @param  Request  $request
+     * @return Response
+     */
+    public function connectAccountAction($provider, Request $request)
+    {
+        $this->validateProvider($provider);
+
+        $handler = $this->getAuthorizationHandler();
+        $procedure = new AuthorizationProcedure($provider);
+
+        // TODO verify if the user already have a valid token in the storage and avoid re-authentication
+        $token = null;
+
+        $handler->handle($procedure, $request);
+        if ($procedure->hasError()) {
+            return $this->handleAuthorizationError($procedure->getError());
+        } elseif ($procedure->succeeded()) {
+            $token = $procedure->getAccessToken();
+        } elseif ($procedure->mustRedirect()) {
+            return $procedure->generateRedirectResponse();
+        }
+
+        if ($token) {
+            // TODO 1. verifies if some other uses has this account connected
+            // TODO 2. connect the account
+        }
+
+    }
+
+    /**
+     * Check if the bundle is enabled
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException if the bundle is not enabled
+     */
+    protected function validateProvider($provider)
+    {
+        $enabled = $this->container->getParameter('oryzone_oauth.enabled');
+        if (!$enabled) {
+            throw $this->createNotFoundException('Oryzone OAuth Bundle is not enabled');
+        }
+
+        $providerFactory = $this->get('oryzone_oauth.provider_factory');
+
+        if (!$providerFactory->has($provider)) {
+            throw $this->createNotFoundException(sprintf('Invalid oauth provider "%s"', $provider));
+        }
+    }
+
+    /**
+     * @return \Oryzone\Bundle\OauthBundle\Authorization\AuthorizationHandler
+     */
+    protected function getAuthorizationHandler()
+    {
+        return $this->get('oryzone_oauth.authorization_handler');
     }
 
     /**

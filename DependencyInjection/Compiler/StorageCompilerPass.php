@@ -34,7 +34,7 @@ class StorageCompilerPass implements CompilerPassInterface
             $services = array();
             foreach ($container->findTaggedServiceIds(self::STORAGE_SERVICE_TAG) as $id => $attributes) {
                 if (!isset($attributes[0]['alias'])) {
-                    throw new InvalidConfigurationException(sprintf('Service "%s" needs mandatory "alias" attribute for service tagged as "%s"', $id, self::STORAGE_SERVICE_TAG));
+                    throw new InvalidConfigurationException(sprintf('Service "%s" needs mandatory "alias" attribute for services tagged as "%s"', $id, self::STORAGE_SERVICE_TAG));
                 }
                 $services[$attributes[0]['alias']] = $id;
             }

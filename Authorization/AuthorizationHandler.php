@@ -11,14 +11,12 @@
 
 namespace Oryzone\Bundle\OauthBundle\Authorization;
 
-use OAuth\Common\Consumer\Credentials;
 use OAuth\Common\Http\Exception\TokenResponseException;
-use OAuth\ServiceFactory;
 
 use Oryzone\Bundle\OauthBundle\Authorization\Error\DeniedError;
 use Oryzone\Bundle\OauthBundle\Authorization\Error\GenericError;
 use Oryzone\Bundle\OauthBundle\Authorization\Error\TokenExceptionError;
-use Oryzone\Bundle\OauthBundle\ProviderManager\ProviderManagerInterface;
+use Oryzone\Bundle\OauthBundle\ProviderFactory\ProviderFactoryInterface;
 use Oryzone\Bundle\OauthBundle\Storage\StorageFactoryInterface;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -39,14 +37,9 @@ class AuthorizationHandler implements AuthorizationHandlerInterface
     const REDIRECT_PATH_PARAMETER = '_target_path';
 
     /**
-     * @var \Oryzone\Bundle\OauthBundle\ProviderManager\ProviderManagerInterface $providerManager
+     * @var \Oryzone\Bundle\OauthBundle\ProviderFactory\ProviderFactoryInterface $providerFactory
      */
-    protected $providerManager;
-
-    /**
-     * @var \Oryzone\Bundle\OauthBundle\Storage\StorageFactoryInterface $storageFactory
-     */
-    protected $storageFactory;
+    protected $providerFactory;
 
     /**
      * @var \Symfony\Component\Routing\RouterInterface $router
@@ -61,15 +54,14 @@ class AuthorizationHandler implements AuthorizationHandlerInterface
     /**
      * Constructor
      *
-     * @param ProviderManagerInterface $providerManager
+     * @param ProviderFactoryInterface $providerFactory
      * @param StorageFactoryInterface  $storageFactory
      * @param RouterInterface          $router
      * @param string                   $defaultTargetPath
      */
-    public function __construct(ProviderManagerInterface $providerManager, StorageFactoryInterface $storageFactory, RouterInterface $router, $defaultTargetPath)
+    public function __construct(ProviderFactoryInterface $providerFactory, RouterInterface $router, $defaultTargetPath)
     {
-        $this->providerManager = $providerManager;
-        $this->storageFactory = $storageFactory;
+        $this->providerFactory = $providerFactory;
         $this->router = $router;
         $this->defaultTargetPath = $defaultTargetPath;
     }
@@ -80,27 +72,16 @@ class AuthorizationHandler implements AuthorizationHandlerInterface
     public function handle(AuthorizationProcedure $procedure, Request $request)
     {
         $provider = $procedure->getProvider();
-        $storage = $this->storageFactory->get($this->providerManager->getStorageService($provider));
-
-        $providerType = $this->providerManager->getType($provider);
 
         $targetPath = $request->query->get(self::REDIRECT_PATH_PARAMETER, $this->defaultTargetPath);
         $callbackRoute = $request->get('_route');
-        $callbackRouteParams = array_merge($request->get('_route_params'), array('provider' => $providerType, self::REDIRECT_PATH_PARAMETER => $targetPath));
+        $callbackRouteParams = array_merge($request->get('_route_params'), array('provider' => $provider, self::REDIRECT_PATH_PARAMETER => $targetPath));
         $callBackUrl = $this->router->generate($callbackRoute, $callbackRouteParams, UrlGeneratorInterface::ABSOLUTE_URL);
-
-        $credentials = new Credentials(
-            $this->providerManager->getAppKey($provider),
-            $this->providerManager->getAppSecret($provider),
-            $callBackUrl
-        );
-
-        $serviceFactory = new ServiceFactory();
 
         /**
          * @var \OAuth\OAuth2\Service\ServiceInterface|\OAuth\OAuth1\Service\ServiceInterface $service
          */
-        $service = $serviceFactory->createService($providerType, $credentials, $storage, $this->providerManager->getScopes($provider));
+        $service = $this->providerFactory->get($provider, $callBackUrl);
 
         $oauthVersion = $service::OAUTH_VERSION;
 

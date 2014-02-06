@@ -15,12 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Oryzone\Bundle\OauthBundle;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use Oryzone\Bundle\OauthBundle\DependencyInjection\Compiler\StorageCompilerPass;
+use Oryzone\Bundle\OauthBundle\DependencyInjection\Compiler\ProviderExtractorCompilerPass;
 
 /**
  * Class OryzoneOauthBundle
@@ -32,5 +34,6 @@ class OryzoneOauthBundle extends Bundle
     {
         parent::build($container);
         $container->addCompilerPass(new StorageCompilerPass());
+        $container->addCompilerPass(new ProviderExtractorCompilerPass());
     }
 }
