@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use Oryzone\Bundle\OauthBundle\DependencyInjection\Compiler\StorageCompilerPass;
-use Oryzone\Bundle\OauthBundle\DependencyInjection\Compiler\ProviderExtractorCompilerPass;
+use Oryzone\Bundle\OauthBundle\DependencyInjection\Compiler\ExtractorCompilerPass;
 
 /**
  * Class OryzoneOauthBundle
@@ -34,6 +34,6 @@ class OryzoneOauthBundle extends Bundle
     {
         parent::build($container);
         $container->addCompilerPass(new StorageCompilerPass());
-        $container->addCompilerPass(new ProviderExtractorCompilerPass());
+        $container->addCompilerPass(new ExtractorCompilerPass());
     }
 }

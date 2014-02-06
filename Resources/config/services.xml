@@ -18,7 +18,7 @@
         <parameter key="oryzone_oauth.authorization_handler.class">Oryzone\Bundle\OauthBundle\Authorization\AuthorizationHandler</parameter>
         <parameter key="oryzone_oauth.error_handler.render_template.class">Oryzone\Bundle\OauthBundle\Authorization\ErrorHandler\RenderTemplateErrorHandler</parameter>
         <parameter key="oryzone_oauth.error_handler.render_template.template">OryzoneOauthBundle::Error.html.twig</parameter>
-        <parameter key="oryzone_oauth.user_data_extractor.class">Oryzone\Bundle\OauthBundle\UserData\UserDataExtractor</parameter>
+        <parameter key="oryzone_oauth.extractor_factory.class">Oryzone\Bundle\OauthBundle\UserData\ExtractorFactory</parameter>
     </parameters>
 
     <services>
@@ -74,14 +74,14 @@
         <service id="oryzone_oauth.error_handler" alias="oryzone_oauth.error_handler.render_template"/>
 
         <!-- user data extractor -->
-        <service id="oryzone_oauth.user_data_extractor" class="%oryzone_oauth.user_data_extractor.class%">
+        <service id="oryzone_oauth.extractor_factory" class="%oryzone_oauth.extractor_factory.class%">
             <argument type="service" id="service_container"/>
-            <argument/> <!-- providerExtractorsMap -->
+            <argument/> <!-- extractorsMap -->
         </service>
 
         <!-- provider extractors -->
-        <service id="oryzone_oauth.provider_extractor_facebook" class="Oryzone\Bundle\OauthBundle\UserData\ProviderExtractor\Facebook">
-            <tag name="oryzone_oauth_provider_extractor" service="OAuth\OAuth2\Service\Facebook"/>
+        <service id="oryzone_oauth.extractor.facebook" class="Oryzone\Bundle\OauthBundle\UserData\Extractor\Facebook">
+            <tag name="oryzone_oauth_extractor" service="OAuth\OAuth2\Service\Facebook"/>
         </service>
     </services>
 

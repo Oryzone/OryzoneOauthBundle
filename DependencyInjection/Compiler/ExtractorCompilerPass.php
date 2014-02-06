@@ -16,30 +16,30 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Class StorageCompilerPass
+ * Class ExtractorCompilerPass
  * @package Oryzone\Bundle\OauthBundle\DependencyInjection\Compiler
  */
-class ProviderExtractorCompilerPass implements CompilerPassInterface
+class ExtractorCompilerPass implements CompilerPassInterface
 {
-    const PROVIDER_EXTRACTOR_SERVICE_TAG = 'oryzone_oauth_provider_extractor';
+    const EXTRACTOR_SERVICE_TAG = 'oryzone_oauth_extractor';
 
     /**
      * {@inheritDoc}
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->hasDefinition('oryzone_oauth.user_data_extractor')) {
-            $definition = $container->getDefinition('oryzone_oauth.user_data_extractor');
+        if ($container->hasDefinition('oryzone_oauth.extractor_factory')) {
+            $definition = $container->getDefinition('oryzone_oauth.extractor_factory');
 
-            $providerExtractorsMap = array();
-            foreach ($container->findTaggedServiceIds(self::PROVIDER_EXTRACTOR_SERVICE_TAG) as $id => $attributes) {
+            $extractorsMap = array();
+            foreach ($container->findTaggedServiceIds(self::EXTRACTOR_SERVICE_TAG) as $id => $attributes) {
                 if (!isset($attributes[0]['service'])) {
-                    throw new InvalidConfigurationException(sprintf('Service "%s" needs mandatory "service" attribute for services tagged as "%s"', $id, self::PROVIDER_EXTRACTOR_SERVICE_TAG));
+                    throw new InvalidConfigurationException(sprintf('Service "%s" needs mandatory "service" attribute for services tagged as "%s"', $id, self::EXTRACTOR_SERVICE_TAG));
                 }
-                $providerExtractorsMap[$attributes[0]['service']] = $id;
+                $extractorsMap[$attributes[0]['service']] = $id;
             }
 
-            $definition->replaceArgument(1, $providerExtractorsMap);
+            $definition->replaceArgument(1, $extractorsMap);
         }
     }
 }

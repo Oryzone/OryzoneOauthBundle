@@ -12,17 +12,19 @@
 namespace Oryzone\Bundle\OauthBundle\UserData;
 
 /**
- * Interface UserDataExtractorInterface
+ * Interface ExtractorFactoryInterface
  * @package Oryzone\Bundle\OauthBundle\UserData
  */
-interface UserDataExtractorInterface
+interface ExtractorFactoryInterface
 {
     /**
-     * Get the user data for a given service
+     * Get the extractor for a given service
      *
      * @param  \OAuth\Common\Service\ServiceInterface $service
-     * @return UserDataInterface
+     * @throws Exception\InvalidExtractorException    if the retrieved instance is not a valid Extractor (not implement ExtractorInterface)
+     * @throws Exception\UnmatchedExtractorException  if can't find an extractor associated to the given service
+     * @return Extractor\ExtractorInterface
      */
-    public function getData($service);
+    public function get($service);
 
 }
