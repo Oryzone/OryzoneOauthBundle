@@ -22,7 +22,7 @@ use Oryzone\Bundle\OauthBundle\Exception\Exception;
 class UnmatchedExtractorException extends \Exception implements Exception
 {
     /**
-     * @var \OAuth\Common\Service\ServiceInterface|string $service
+     * @var \OAuth\Common\Service\ServiceInterface $service
      */
     protected $service;
 
@@ -34,7 +34,7 @@ class UnmatchedExtractorException extends \Exception implements Exception
     /**
      * Constructor
      *
-     * @param \OAuth\Common\Service\ServiceInterface|string $service
+     * @param \OAuth\Common\Service\ServiceInterface $service
      * @param array                                         $registeredExtractors
      */
     public function __construct(ServiceInterface $service, $registeredExtractors = array())
