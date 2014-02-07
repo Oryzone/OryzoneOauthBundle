@@ -62,6 +62,10 @@ class LazyExtractor extends Extractor
      */
     public function getField($field)
     {
+        if (!$this->isFieldSupported($field)){
+            return null;
+        }
+
         if (!$this->hasLoadedField($field)) {
             $loaderData = $this->getLoaderData($field);
             if (isset($this->normalizersMap[$field])) {
