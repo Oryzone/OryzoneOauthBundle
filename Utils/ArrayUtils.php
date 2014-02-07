@@ -43,12 +43,7 @@ class ArrayUtils
      */
     public static function removeKeys($array, $keys)
     {
-        $result = $array;
-        foreach ($keys as $key) {
-            unset($result[$key]);
-        }
-
-        return $result;
+        return array_diff_key($array, array_flip($keys));
     }
 
 }

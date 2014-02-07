@@ -83,6 +83,9 @@
         <service id="oryzone_oauth.extractor.facebook" class="Oryzone\Bundle\OauthBundle\UserData\Extractor\Facebook">
             <tag name="oryzone_oauth_extractor" service="OAuth\OAuth2\Service\Facebook"/>
         </service>
+        <service id="oryzone_oauth.extractor.twitter" class="Oryzone\Bundle\OauthBundle\UserData\Extractor\Twitter">
+            <tag name="oryzone_oauth_extractor" service="OAuth\OAuth1\Service\Twitter"/>
+        </service>
     </services>
 
 </container>
