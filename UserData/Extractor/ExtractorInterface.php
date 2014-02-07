@@ -30,6 +30,7 @@ interface ExtractorInterface
     const FIELD_DESCRIPTION = 'description';
     const FIELD_IMAGE_URL = 'imageUrl';
     const FIELD_PROFILE_URL = 'profileUrl';
+    const FIELD_WEBSITES = 'websites';
     const FIELD_EXTRA = 'extra';
 
     /**
@@ -39,6 +40,7 @@ interface ExtractorInterface
 
     /**
      * Check if the current provider supports a unique id
+     *
      * @return bool
      */
     public function supportsUniqueId();
@@ -52,6 +54,7 @@ interface ExtractorInterface
 
     /**
      * Check if the current provider supports a username
+     *
      * @return bool
      */
     public function supportsUsername();
@@ -65,6 +68,7 @@ interface ExtractorInterface
 
     /**
      * Check if the current provider supports a first name
+     *
      * @return bool
      */
     public function supportsFirstName();
@@ -91,6 +95,7 @@ interface ExtractorInterface
 
     /**
      * Check if the current provider supports a full name
+     *
      * @return bool
      */
     public function supportsFullName();
@@ -104,6 +109,7 @@ interface ExtractorInterface
 
     /**
      * Check ig the current provider supports an email
+     *
      * @return bool
      */
     public function supportsEmail();
@@ -117,6 +123,7 @@ interface ExtractorInterface
 
     /**
      * Check if the current provider supports a location
+     *
      * @return bool
      */
     public function supportsLocation();
@@ -130,6 +137,7 @@ interface ExtractorInterface
 
     /**
      * Check if the current provider supports a description
+     *
      * @return bool
      */
     public function supportsDescription();
@@ -143,6 +151,7 @@ interface ExtractorInterface
 
     /**
      * Check if the current provider supports an image url
+     *
      * @return bool
      */
     public function supportsImageUrl();
@@ -156,6 +165,7 @@ interface ExtractorInterface
 
     /**
      * Check if the current provider supports a profile url
+     *
      * @return bool
      */
     public function supportsProfileUrl();
@@ -166,6 +176,20 @@ interface ExtractorInterface
      * @return string
      */
     public function getProfileUrl();
+
+    /**
+     * Check if the current provider supports websites
+     *
+     * @return bool
+     */
+    public function supportsWebsites();
+
+    /**
+     * Get websites
+     *
+     * @return array
+     */
+    public function getWebsites();
 
     /**
      * Get an extra attribute

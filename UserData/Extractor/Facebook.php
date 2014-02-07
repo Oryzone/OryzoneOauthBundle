@@ -12,6 +12,7 @@
 namespace Oryzone\Bundle\OauthBundle\UserData\Extractor;
 
 use Oryzone\Bundle\OauthBundle\Utils\ArrayUtils;
+use Oryzone\Bundle\OauthBundle\Utils\StringUtils;
 
 /**
  * Class Facebook
@@ -79,42 +80,47 @@ class Facebook extends LazyExtractor
 
     protected function usernameNormalizer($data)
     {
-        return $data['username'];
+        return isset($data['username']) ? $data['username'] : null;
     }
 
     protected function firstNameNormalizer($data)
     {
-        return $data['first_name'];
+        return isset($data['first_name']) ? $data['first_name'] : null;
     }
 
     protected function lastNameNormalizer($data)
     {
-        return $data['last_name'];
+        return isset($data['last_name']) ? $data['last_name'] : null;
     }
 
     protected function fullNameNormalizer($data)
     {
-        return $data['name'];
+        return isset($data['name']) ? $data['name'] : null;
     }
 
     protected function emailNormalizer($data)
     {
-        return $data['email'];
+        return isset($data['email']) ? $data['email'] : null;
     }
 
     protected function descriptionNormalizer($data)
     {
-        return $data['bio'];
+        return isset($data['bio']) ? $data['bio'] : null;
     }
 
     protected function profileUrlNormalizer($data)
     {
-        return $data['link'];
+        return isset($data['link']) ? $data['link'] : null;
     }
 
     protected function locationNormalizer($data)
     {
         return isset($data['location']['name']) ? $data['location']['name'] : null;
+    }
+
+    protected function websitesNormalizer($data)
+    {
+        return isset($data['website']) ? StringUtils::extractUrls($data['website']) : array();
     }
 
     protected function extraNormalizer($data)
@@ -128,7 +134,8 @@ class Facebook extends LazyExtractor
             'email',
             'bio',
             'link',
-            'location'
+            'location',
+            'website'
         ));
     }
 

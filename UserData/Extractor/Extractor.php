@@ -212,6 +212,22 @@ class Extractor implements ExtractorInterface
     /**
      * {@inheritDoc}
      */
+    public function supportsWebsites()
+    {
+        return $this->isFieldSupported(self::FIELD_WEBSITES);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getWebsites()
+    {
+        return $this->getField(self::FIELD_WEBSITES);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getExtra($key)
     {
         $extras = $this->getExtras();
