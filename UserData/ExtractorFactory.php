@@ -11,10 +11,13 @@
 
 namespace Oryzone\Bundle\OauthBundle\UserData;
 
-use Oryzone\Bundle\OauthBundle\UserData\Exception\InvalidExtractorException;
-use Oryzone\Bundle\OauthBundle\UserData\Exception\UnmatchedExtractorException;
-use Oryzone\Bundle\OauthBundle\UserData\Extractor\ExtractorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use OAuth\UserData\ExtractorFactoryInterface;
+
+use OAuth\UserData\Exception\InvalidExtractorException;
+use OAuth\UserData\Exception\UnmatchedExtractorException;
+use OAuth\UserData\Extractor\ExtractorInterface;
 
 /**
  * Class ExtractorFactory
@@ -67,9 +70,9 @@ class ExtractorFactory implements ExtractorFactoryInterface
      * Build the extractor for a given service
      *
      * @param  \OAuth\Common\Service\ServiceInterface $service
-     * @throws Exception\InvalidExtractorException
-     * @throws Exception\UnmatchedExtractorException
-     * @return Extractor\ExtractorInterface
+     * @throws \OAuth\UserData\Exception\InvalidExtractorException
+     * @throws \OAuth\UserData\Exception\UnmatchedExtractorException
+     * @return \OAuth\UserData\Extractor\ExtractorInterface
      */
     protected function buildExtractor($service)
     {
