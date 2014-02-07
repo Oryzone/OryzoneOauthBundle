@@ -27,11 +27,11 @@ class InvalidServiceException extends \Exception implements Exception
     /**
      * Constructor
      *
-     * @param string $serviceName The name of the DIC service
+     * @param string $extractorClass The name of the DIC service
      */
-    public function __construct($serviceName)
+    public function __construct($extractorClass)
     {
-        $this->serviceName = $serviceName;
+        $this->serviceName = $extractorClass;
         $message = sprintf('The Oauth Storage service "%s" is not an instance of "\OAuth\Common\Storage\TokenStorageInterface"',
             $this->serviceName);
         parent::__construct($message);

@@ -13,10 +13,12 @@ namespace Oryzone\Bundle\OauthBundle\UserData;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use OAuth\Common\Service\ServiceInterface;
+
 use OAuth\UserData\ExtractorFactoryInterface;
 
 use OAuth\UserData\Exception\InvalidExtractorException;
-use OAuth\UserData\Exception\UnmatchedExtractorException;
+use OAuth\UserData\Exception\UndefinedExtractorException;
 use OAuth\UserData\Extractor\ExtractorInterface;
 
 /**
@@ -50,7 +52,7 @@ class ExtractorFactory implements ExtractorFactoryInterface
     /**
      * {@inheritDoc}
      */
-    public function get($service)
+    public function get(ServiceInterface $service)
     {
         return $this->buildExtractor($service);
     }
@@ -71,7 +73,7 @@ class ExtractorFactory implements ExtractorFactoryInterface
      *
      * @param  \OAuth\Common\Service\ServiceInterface $service
      * @throws \OAuth\UserData\Exception\InvalidExtractorException
-     * @throws \OAuth\UserData\Exception\UnmatchedExtractorException
+     * @throws \OAuth\UserData\Exception\UndefinedExtractorException
      * @return \OAuth\UserData\Extractor\ExtractorInterface
      */
     protected function buildExtractor($service)
@@ -79,14 +81,19 @@ class ExtractorFactory implements ExtractorFactoryInterface
         $serviceFullyQualifiedClassName = get_class($service);
 
         if (!isset($this->extractorsMap[$serviceFullyQualifiedClassName])) {
-            throw new UnmatchedExtractorException($service, array_keys($this->extractorsMap));
+            throw new UndefinedExtractorException($service, array_keys($this->extractorsMap));
         }
 
         $serviceName = $this->extractorsMap[$serviceFullyQualifiedClassName];
         $extractor = $this->container->get($serviceName);
 
         if (! $extractor instanceof ExtractorInterface) {
-            throw new InvalidExtractorException($serviceName);
+            $extractorClass = get_class($extractor);
+            $message = sprintf(
+                'The service "%s" (%s) does not implement the interface \OAuth\UserData\Extractor\ExtractorInterface',
+                $serviceName, $extractorClass
+            );
+            throw new InvalidExtractorException($extractorClass, $message);
         }
 
         $extractor->setService($service);
